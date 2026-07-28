@@ -2,6 +2,7 @@ package dev.sorokin.eventmanager.location.converter;
 
 import dev.sorokin.eventmanager.location.dto.CreateLocationDto;
 import dev.sorokin.eventmanager.location.dto.LocationDto;
+import dev.sorokin.eventmanager.location.dto.UpdateLocationDto;
 import dev.sorokin.eventmanager.location.entity.Location;
 import io.lettuce.core.dynamic.annotation.Command;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,16 @@ public class LocationDtoConverter {
                 createLocationDto.address(),
                 createLocationDto.capacity(),
                 createLocationDto.description()
+        );
+    }
+
+    public Location updateToDomain(UpdateLocationDto updateLocationDto) {
+        return new Location(
+                null,
+                updateLocationDto.name(),
+                updateLocationDto.address(),
+                updateLocationDto.capacity(),
+                updateLocationDto.description()
         );
     }
 }

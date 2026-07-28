@@ -1,6 +1,7 @@
 package dev.sorokin.eventmanager.web;
 
 import dev.sorokin.eventmanager.location.exceptions.LocationNameIsAlreadyExist;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,6 +81,22 @@ public class GlobalExceptionHandler {
                 .body(new ServerErrorResponse(
                         "Name is already exists error",
                         exception.getMessage(),
+                        LocalDateTime.now()
+                ));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ServerErrorResponse> entityNotFoundExceptionHandler(
+            EntityNotFoundException e
+    ) {
+
+        log.error("Got entity not found exception! {}", e.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ServerErrorResponse(
+                        "Entity not found!",
+                        e.getMessage(),
                         LocalDateTime.now()
                 ));
     }
