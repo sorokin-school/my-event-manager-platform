@@ -1,7 +1,6 @@
 package dev.sorokin.eventmanager.location.service;
 
-import dev.sorokin.eventmanager.location.converter.LocationEntityConverter;
-import dev.sorokin.eventmanager.location.dto.CreateLocationDto;
+import dev.sorokin.eventmanager.location.converter.LocationMapper;
 import dev.sorokin.eventmanager.location.entity.Location;
 import dev.sorokin.eventmanager.location.exceptions.LocationNameIsAlreadyExist;
 import dev.sorokin.eventmanager.location.repository.LocationRepository;
@@ -17,7 +16,7 @@ import java.util.List;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-    private final LocationEntityConverter entityConverter;
+    private final LocationMapper locationMapper;
 
     public Location createLocation(Location location) {
 
@@ -28,11 +27,11 @@ public class LocationService {
         }
 
 
-        var entity = locationRepository.save(entityConverter.toEntity(location));
+        var entity = locationRepository.save(locationMapper.domainToEntity(location));
 
         System.out.println(entity);
 
-        return entityConverter.toDomain(entity);
+        return locationMapper.entityToDomain(entity);
     }
 
 
@@ -40,7 +39,7 @@ public class LocationService {
 
         return locationRepository.findAll()
                 .stream()
-                .map(entityConverter::toDomain)
+                .map(locationMapper::entityToDomain)
                 .toList();
     }
 
@@ -67,7 +66,7 @@ public class LocationService {
             entity.setDescription(location.description());
         }
 
-        return entityConverter.toDomain(entity);
+        return locationMapper.entityToDomain(entity);
     }
 
     public Location getLocationById(Long id) {
@@ -76,7 +75,7 @@ public class LocationService {
                 () -> new EntityNotFoundException("Entity with id %s not found".formatted(id))
         );
 
-        return entityConverter.toDomain(entity);
+        return locationMapper.entityToDomain(entity);
     }
 
 
