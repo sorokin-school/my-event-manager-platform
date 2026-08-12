@@ -28,3 +28,7 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui/index.html
+
+jwt:
+  secret-key: GMJTuiw5q4V4Y4jHn1TdyixIdPp1UjEXrRNaEqdE0dZ
+  lifetime: 86400000

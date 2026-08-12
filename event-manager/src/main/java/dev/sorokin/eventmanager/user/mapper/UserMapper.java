@@ -2,9 +2,11 @@ package dev.sorokin.eventmanager.user.mapper;
 
 import dev.sorokin.eventmanager.user.dto.UserRegistrationRequest;
 import dev.sorokin.eventmanager.user.dto.UserResponse;
+import dev.sorokin.eventmanager.user.dto.UserUpdateRequest;
 import dev.sorokin.eventmanager.user.entity.User;
 import dev.sorokin.eventmanager.user.entity.UserEntity;
 import dev.sorokin.eventmanager.user.entity.enums.UserRole;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,6 +48,21 @@ public class UserMapper {
                 userEntity.getAge(),
                 userEntity.getPassword(),
                 userEntity.getRole()
+        );
+    }
+
+    public User updateRequestToDomain(UserUpdateRequest  updateRequest) {
+        UserRole role;
+
+
+        return new User(
+                null,
+                updateRequest.login(),
+                updateRequest.age(),
+                updateRequest.password(),
+                role = updateRequest.role() == null ?
+                        UserRole.USER
+                        : UserRole.valueOf(updateRequest.role())
         );
     }
 }

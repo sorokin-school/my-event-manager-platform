@@ -5,11 +5,14 @@ import dev.sorokin.eventmanager.location.dto.CreateLocationDto;
 import dev.sorokin.eventmanager.location.dto.LocationDto;
 import dev.sorokin.eventmanager.location.dto.UpdateLocationDto;
 import dev.sorokin.eventmanager.location.service.LocationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +28,11 @@ public class LocationController {
 
 
 
+    @Operation(
+            summary = "Создание локации, roles=[ADMIN]"
+    )
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<LocationDto> createLocation(
                 @Valid @RequestBody CreateLocationDto createLocationDto
         ) {
@@ -42,7 +49,11 @@ public class LocationController {
                 ));
     }
 
+    @Operation(
+            summary = "Получение списка локаций, roles=[ADMIN, USER]"
+    )
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public List<LocationDto> getLocations() {
 
         log.info("Got request for get locations list");
@@ -52,7 +63,11 @@ public class LocationController {
                 .toList();
     }
 
+    @Operation(
+            summary = "Изменение локации, roles=[ADMIN]"
+    )
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<LocationDto> updateLocation(
             @PathVariable Long id,
             @Valid @RequestBody UpdateLocationDto updateLocationDto
@@ -71,7 +86,11 @@ public class LocationController {
                 );
     }
 
+    @Operation(
+            summary = "Получение локации по Id, roles=[ADMIN, USER]"
+    )
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<LocationDto> getLocationById(@PathVariable Long id) {
 
         log.info("Got request for get location by id: {}", id);
@@ -85,7 +104,11 @@ public class LocationController {
                 );
     }
 
+    @Operation(
+            summary = "Удаление локации, roles=[ADMIN]"
+    )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteLocationById(@PathVariable Long id) {
 
         log.info("Got request for delete location by id: {}", id);

@@ -1,6 +1,9 @@
 package dev.sorokin.eventmanager.security;
 
 import dev.sorokin.eventmanager.security.details.CustomUserDetailsService;
+import dev.sorokin.eventmanager.security.handlers.CustomAccessDeniedHandler;
+import dev.sorokin.eventmanager.security.handlers.CustomAuthenticationEntryPointHandler;
+import dev.sorokin.eventmanager.security.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,6 +27,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPointHandler customAuthenticationEntryPointHandler;
+    private final JwtTokenFilter jwtTokenFilter;
 
 
     @Bean
@@ -37,15 +44,21 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(authorizeHttpRequests ->
                             authorizeHttpRequests
-                                    .requestMatchers(HttpMethod.POST, "/users").permitAll()
                                     .requestMatchers(
                                             "/swagger-ui/**",
                                             "/swagger-ui.html",
                                             "/v3/api-docs/**"
                                     ).permitAll()
+                                    .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                    .requestMatchers(HttpMethod.POST, "/users/auth").permitAll()
 
                                     .anyRequest().authenticated()
                 )
+                .exceptionHandling(exceptionHandler ->
+                        exceptionHandler.accessDeniedHandler(customAccessDeniedHandler)
+                                .authenticationEntryPoint(customAuthenticationEntryPointHandler)
+                        )
+                .addFilterBefore(jwtTokenFilter, AnonymousAuthenticationFilter.class)
                 .build();
     }
 
