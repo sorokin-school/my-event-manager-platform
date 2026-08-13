@@ -1,5 +1,6 @@
 package dev.sorokin.eventmanager.security.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,15 @@ public class JwtTokenManager {
                 .compact();
     }
 
+    public String generateTokenByLogin(String login) {
+        return Jwts
+                .builder()
+                .subject(login)
+                .signWith(secretKey)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
+                .compact();
+    }
 
     public String getLoginFromToken(String token) {
 
@@ -45,5 +55,19 @@ public class JwtTokenManager {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+
+        try {
+             Jwts.parser()
+                     .verifyWith(secretKey)
+                     .build()
+                     .parseSignedClaims(token);
+
+             return true;
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
     }
 }
