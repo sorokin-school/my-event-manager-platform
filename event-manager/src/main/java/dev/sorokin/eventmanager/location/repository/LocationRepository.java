@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
 
     boolean existsByName(String name);
+
+    boolean existsByAddress(String address);
 }

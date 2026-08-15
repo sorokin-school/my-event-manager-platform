@@ -19,7 +19,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(name = "/locations")
+@RequestMapping("/locations")
 @RequiredArgsConstructor
 public class LocationController {
 
